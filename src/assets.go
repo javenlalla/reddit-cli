@@ -1,10 +1,10 @@
 package src
 
 import (
-	"fmt"
 	"io"
 	"net/http"
 	"os"
+	"reddit-sync/src/reddit"
 )
 
 // DownloadAsset executes an HTTP request to download an asset from the provided source URL to the designated
@@ -16,7 +16,7 @@ func DownloadAsset(sourceUrl string, targetFilePath string) (int64, error) {
 	}
 	defer f.Close()
 
-	r, err := execGet(sourceUrl)
+	r, err := reddit.GetByUrlWithRetry(sourceUrl, 3)
 	if err != nil {
 		return 0, err
 	}
@@ -44,14 +44,4 @@ func initializeLocalFile(targetFilePath string) (*os.File, error) {
 	}
 
 	return f, nil
-}
-
-// execGet executes an HTTP GET requested against the targeted URL.
-func execGet(url string) (*http.Response, error) {
-	r, err := http.Get(url)
-	if err != nil {
-		return nil, fmt.Errorf("GET request to %s unsuccessful: %s", url, err)
-	}
-
-	return r, nil
 }

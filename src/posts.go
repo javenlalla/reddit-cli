@@ -10,11 +10,14 @@ import (
 
 func GetPost() {
 	url := "https://www.reddit.com/r/dbz/comments/znnbh4/universe_7_ready_to_win_the_next_tournament_of/.json"
-	resp := reddit.GetByUrl(url)
+	resp, err := reddit.GetByUrl(url)
+	if err != nil {
+		log.Fatalf("call to `%s` failed: %s", url, err)
+	}
 	defer resp.Body.Close()
 
 	var listings []reddit.Listing
-	err := json.NewDecoder(resp.Body).Decode(&listings)
+	err = json.NewDecoder(resp.Body).Decode(&listings)
 	if err != nil {
 		log.Fatalf("unable to parse Listings from JSON Response URL `%s`: %s", url, err)
 	}
