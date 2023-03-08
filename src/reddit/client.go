@@ -2,6 +2,7 @@ package reddit
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"time"
 )
@@ -30,13 +31,18 @@ func GetByUrlWithRetry(url string, retries int64) (*http.Response, error) {
 		r, err := GetByUrl(url)
 		if err != nil {
 			c++
+		} else if r.StatusCode == 404 {
+			// If the URL 404s, then avoid retrying unnecessarily.
+			return nil, fmt.Errorf("404: url `%s` not found", url)
 		} else {
 			return r, nil
 		}
 
 		// If the call will be attempted again, pause briefly before proceeding.
 		if c < retries {
+			log.Println("call failed. Pausing then retrying.")
 			time.Sleep(1 * time.Second)
+			log.Println("pause complete. Resuming.")
 		}
 	}
 
@@ -46,10 +52,10 @@ func GetByUrlWithRetry(url string, retries int64) (*http.Response, error) {
 // getHttpClient initializes and returns an HTTP client instance.
 func getHttpClient() *http.Client {
 	return &http.Client{
-		Timeout: time.Second * 15,
+		Timeout: time.Second * 60,
 		Transport: &http.Transport{
 			MaxIdleConns:       10,
-			IdleConnTimeout:    30 * time.Second,
+			IdleConnTimeout:    90 * time.Second,
 			DisableCompression: true,
 		},
 	}

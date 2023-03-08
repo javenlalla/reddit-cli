@@ -3,7 +3,7 @@ package cmd
 import (
 	"github.com/spf13/cobra"
 	"log"
-	"reddit-sync/src"
+	"reddit-sync/src/reddit"
 )
 
 // downloadAssetCmd represents the downloadAsset command
@@ -21,7 +21,7 @@ var downloadAssetCmd = &cobra.Command{
 			log.Fatalln(err)
 		}
 
-		n, err := src.DownloadAsset(sourceUrl, targetPath)
+		n, err := reddit.DownloadAsset(sourceUrl, targetPath)
 		if err != nil {
 			log.Fatalln(err)
 		}

@@ -1,10 +1,9 @@
-package src
+package reddit
 
 import (
 	"io"
 	"net/http"
 	"os"
-	"reddit-sync/src/reddit"
 )
 
 // DownloadAsset executes an HTTP request to download an asset from the provided source URL to the designated
@@ -16,7 +15,7 @@ func DownloadAsset(sourceUrl string, targetFilePath string) (int64, error) {
 	}
 	defer f.Close()
 
-	r, err := reddit.GetByUrlWithRetry(sourceUrl, 3)
+	r, err := GetByUrlWithRetry(sourceUrl, 3)
 	if err != nil {
 		return 0, err
 	}
