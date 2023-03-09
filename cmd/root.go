@@ -29,11 +29,11 @@ func Execute() {
 }
 
 func init() {
-	viper.SetConfigFile(".env")
-	err := viper.ReadInConfig()
-	if err != nil {
-		panic(fmt.Errorf("fatal error config file: %w", err))
-	}
+	//viper.SetConfigFile(".env")
+	//err := viper.ReadInConfig()
+	//if err != nil {
+	//	panic(fmt.Errorf("fatal error config file: %w", err))
+	//}
 	viper.AutomaticEnv()
 
 	// Here you will define your flags and configuration settings.
