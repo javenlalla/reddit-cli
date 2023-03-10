@@ -1,7 +1,9 @@
 package reddit
 
 import (
+	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"os"
 )
@@ -17,7 +19,7 @@ func DownloadAsset(sourceUrl string, targetFilePath string) (int64, error) {
 
 	r, err := GetByUrlWithRetry(sourceUrl, 3)
 	if err != nil {
-		return 0, err
+		return 0, fmt.Errorf("get with retry failed: %w", err)
 	}
 
 	return writeAssetResponseToFile(r, f)
@@ -27,9 +29,16 @@ func DownloadAsset(sourceUrl string, targetFilePath string) (int64, error) {
 // The number of bytes written is returned.
 func writeAssetResponseToFile(r *http.Response, f *os.File) (int64, error) {
 	defer r.Body.Close()
+
+	l, err := r.Location()
+	if err != nil {
+		return 0, fmt.Errorf("unable to retrieve asset location: %w", err)
+	}
+
+	log.Printf("downloading %s to %s", fmt.Sprintf("%s%s", l.Host, l.Path), f.Name())
 	n, err := io.Copy(f, r.Body)
 	if err != nil {
-		return 0, err
+		return 0, fmt.Errorf("download failed: %w", err)
 	}
 
 	return n, nil
