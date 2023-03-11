@@ -22,15 +22,15 @@ func DownloadAsset(sourceUrl string, targetFilePath string) (int64, error) {
 		return 0, fmt.Errorf("get with retry failed: %w", err)
 	}
 
-	return writeAssetResponseToFile(sourceUrl, r, f)
+	return writeAssetResponseToFile(r, f)
 }
 
 // writeAssetResponseToFile writes the asset from a http.Response to the provided File.
 // The number of bytes written is returned.
-func writeAssetResponseToFile(s string, r *http.Response, f *os.File) (int64, error) {
+func writeAssetResponseToFile(r *http.Response, f *os.File) (int64, error) {
 	defer r.Body.Close()
 
-	log.Printf("downloading %s to %s", s, f.Name())
+	log.Printf("downloading %s to %s", r.Request.URL.String(), f.Name())
 	n, err := io.Copy(f, r.Body)
 	if err != nil {
 		return 0, fmt.Errorf("download failed: %w", err)
